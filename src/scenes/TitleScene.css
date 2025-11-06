@@ -8,6 +8,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: #e0f7fa; /* Lighter blue background */
+  image-rendering: pixelated;
+}
+
+@font-face {
+  font-family: 'PixelFont';
+  src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  font-display: swap;
 }
 
 .title-heading {
@@ -15,6 +23,15 @@
   letter-spacing: 1px;
   margin-bottom: 2rem;
   text-align: center;
+  font-family: 'Press Start 2P', 'PixelFont', monospace;
+  image-rendering: pixelated;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', 'PixelFont', monospace;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  image-rendering: pixelated;
 }
 
 .dragon-container {
@@ -23,30 +40,209 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem auto;
+  position: relative;
+  border-radius: 8px;
+  padding: 12px;
 }
 
 .dragon-image {
+  image-rendering: pixelated;
   object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.2));
+  transform-origin: center bottom;
+  max-width: 100%;
   max-height: 100%;
-  transform: scale(1);
-  transition: transform 0.3s ease;
 }
 
-.dragon-image:hover {
-  transform: scale(1.05);
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.bounce {
+  animation: bounce 2s ease infinite;
 }
 
 .buttons-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   z-index: 10;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+
+.speech-bubble {
+  position: relative;
+  background-color: #166534; /* Dark green */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+  border: 4px solid #15803d;
+  image-rendering: pixelated;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.speech-bubble p {
+  margin: 0;
+  padding: 0;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Button Styles */
+.pixel-btn-primary,
+.pixel-btn-secondary {
+  @apply px-8 py-4 font-bold text-white rounded-none border-4 border-b-8 border-r-8 
+  transform transition-all duration-200 active:translate-y-1 active:border-b-4 active:border-r-4;
+  font-family: 'Press Start 2P', 'PixelFont', monospace;
+  letter-spacing: 1px;
+  image-rendering: pixelated;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-btn-primary {
+  @apply bg-green-500 border-green-700 hover:bg-green-600;
+}
+
+.pixel-btn-secondary {
+  @apply bg-red-500 border-red-700 hover:bg-red-600;
+}
+
+.pixel-btn-primary::after,
+.pixel-btn-secondary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+
+.pixel-btn-primary:hover::after,
+.pixel-btn-secondary:hover::after {
+  transform: translateX(100%);
 }
 
 @media (min-width: 768px) {
   .buttons-container {
     flex-direction: row;
-    gap: 1.5rem;
+    gap: 2rem;
+    justify-content: center;
   }
+}
+
+/* Ensure images are pixelated */
+img, [style*="background-image"] {
+  image-rendering: pixelated !important;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+}
+
+/* Bush effect */
+[class*="grass"] {
+  image-rendering: pixelated;
+  background-size: auto 100%;
+  background-position: bottom;
+  position: relative;
+  transform-origin: bottom;
+  background-repeat: repeat-x;
+}
+
+/* Add subtle animation to grass */
+@keyframes sway {
+  0%, 100% {
+    transform: skewX(0deg);
+  }
+  50% {
+    transform: skewX(1deg);
+  }
+}
+
+[class*="grass"]:hover {
+  animation: sway 3s ease infinite;
+}
+
+/* Add depth to bushes */
+[style*="grass_2.png"] {
+  filter: saturate(1.2);
+  mix-blend-mode: multiply;
+}
+
+/* Ground styling */
+.pixel-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+/* Country dropdown styling */
+.country-dropdown {
+  background-color: white;
+  border: 2px solid #fcd34d;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 100;
+  width: 100%;
+}
+
+.country-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.country-item:hover {
+  background-color: #fef3c7;
+}
+
+/* Scale classes */
+.scale-75 {
+  transform: scale(0.75);
+}
+
+.scale-100 {
+  transform: scale(1);
+}
+
+.scale-125 {
+  transform: scale(1.25);
 } 
