@@ -43,7 +43,7 @@ import map1Footsteps from '../assets/images/map_1/footsteps.png';
 // Import Map 2 assets
 import map2Background from '../assets/images/map_2/background.png';
 import map2StartPoint from '../assets/images/map_2/start_point.png';
-import glowingLagoonImage from '../assets/images/map_2/glowing_lagoon.png';
+import glowingLagoonImage from '../assets/images/map_2/Glowing_Lagoon.png';
 import whisperingCliffsImage from '../assets/images/map_2/Whispering_Cliffs.png';
 import emberIsleImage from '../assets/images/map_2/ember_Isle.png';
 import skybridgeArchipelagoImage from '../assets/images/map_2/skybridge_archipelago.png';
