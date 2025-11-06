@@ -6,7 +6,7 @@ import { handlePhishingChoice, getPhishingPrompt } from '../utils/gameUtils';
 import { PhishingPromptWithHover } from '../utils/phishingPromptFactory';
 
 // Import assets
-import backgroundImage from '../assets/images/map_2/glowing_lagoon.png';
+import backgroundImage from '../assets/images/map_2/Glowing_Lagoon.png';
 import monster1Image from '../assets/images/monsters/monster_1.png';
 import monster2Image from '../assets/images/monsters/monster_2.png';
 import footprintImage from '../assets/images/map_2/footsteps.png';
