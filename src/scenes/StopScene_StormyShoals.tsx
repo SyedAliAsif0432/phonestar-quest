@@ -49,7 +49,7 @@ const StopScene_StormyShoals = () => {
 
   const handlePromptClick = (isSafe: boolean) => {
     if (!isSafe) {
-      handlePhishingChoice("origin", 'game-over');
+      handlePhishingChoice("origin", 'skybridge-archipelago');
       if (useDragonStore.getState().gameOver) {
         navigate('/game-over');
         return;
@@ -58,10 +58,10 @@ const StopScene_StormyShoals = () => {
       setTimeout(() => {
         setFootprintInfo({
           from: 'stormy-shoals',
-          to: 'game-over'
+          to: 'skybridge-archipelago'
         });
         setCurrentStop('');
-        navigate('/game-over');
+        // Keep map flow consistent: only navigate to game over when leak threshold is reached.
       }, 500);
     } else {
       setSelectedPath('skybridge-archipelago');
@@ -72,7 +72,7 @@ const StopScene_StormyShoals = () => {
           to: 'skybridge-archipelago'
         });
         setCurrentStop('');
-        navigate('/skybridge-archipelago');
+        // Stay on /map: MapScene runs footprint animation then sets next stop (same as Map 1).
       }, 500);
     }
   };

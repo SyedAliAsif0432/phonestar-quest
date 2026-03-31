@@ -52,7 +52,7 @@ const StopScene_EmberIsle = () => {
 
   const handlePromptClick = (isSafe: boolean) => {
     if (!isSafe) {
-      handlePhishingChoice("origin", 'echoing-cave-2');
+      handlePhishingChoice("origin", 'skybridge-archipelago');
       if (useDragonStore.getState().gameOver) {
         navigate('/game-over');
         return;
@@ -61,7 +61,7 @@ const StopScene_EmberIsle = () => {
       setTimeout(() => {
         setFootprintInfo({
           from: 'ember-isle',
-          to: 'echoing-cave-2'
+          to: 'skybridge-archipelago'
         });
         setCurrentStop('');
       }, 500);
@@ -119,7 +119,7 @@ const StopScene_EmberIsle = () => {
                   {/* Left prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(!promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(!promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
@@ -142,7 +142,7 @@ const StopScene_EmberIsle = () => {
                   {/* Right prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 

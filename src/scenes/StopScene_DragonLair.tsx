@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDragonStore } from '../store/dragonStore';
 import { useNavigate } from 'react-router-dom';
 
 // Import assets
 import backgroundImage from '../assets/images/map_2/dragon_lair.png';
+import confettiImage from '../assets/images/confetti.png';
+import trophyImage from '../assets/images/trophy.png';
+
+// Import dragon images
 import redDragonImage from '../assets/images/dragons/red-dragon.png';
 import blueDragonImage from '../assets/images/dragons/blue-dragon.png';
 import greenDragonImage from '../assets/images/dragons/green-dragon.png';
@@ -14,35 +18,41 @@ import blackDragonImage from '../assets/images/dragons/black-dragon.png';
 
 const StopScene_DragonLair = () => {
   const navigate = useNavigate();
-  const { dragonInfo, leaks, resetGame } = useDragonStore();
-  const [showVictoryMessage, setShowVictoryMessage] = useState(false);
+  const {
+    currentStop,
+    setCurrentStop,
+    leaks,
+    dragonInfo,
+    resetGame
+  } = useDragonStore();
 
-  // Animation variants
+  const [isVisible, setIsVisible] = useState(false);
+  const [showTips, setShowTips] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  const isSuccessful = () => {
+    const leakCount = [leaks.name, leaks.age, leaks.origin].filter(Boolean).length;
+    return leakCount < 3;
+  };
+
   const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1 } },
-    exit: { opacity: 0, transition: { duration: 0.5 } }
+    hidden: { scale: 0.5, opacity: 0 },
+    visible: { scale: 1, opacity: 1, transition: { duration: 0.8 } },
+    exit: { scale: 0.5, opacity: 0, transition: { duration: 0.5 } }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { y: 20, opacity: 0 },
     visible: (custom: number) => ({
-      opacity: 1,
       y: 0,
+      opacity: 1,
       transition: {
-        delay: custom * 0.3,
-        duration: 0.5
+        delay: 0.5 + (custom * 0.2),
+        duration: 0.6,
+        ease: 'easeOut'
       }
     })
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowVictoryMessage(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const getDragonImage = () => {
     switch (dragonInfo.color) {
@@ -57,135 +67,337 @@ const StopScene_DragonLair = () => {
   };
 
   const getDragonScale = () => {
-    switch (dragonInfo.color) {
-      case 'Red': return 'scale-100';
-      case 'Blue': return 'scale-90';
-      case 'Green': return 'scale-95';
-      case 'Orange': return 'scale-105';
-      case 'Purple': return 'scale-85';
-      case 'Black': return 'scale-110';
-      default: return 'scale-100';
-    }
+    if (dragonInfo.age <= 5) return 'scale-75';
+    if (dragonInfo.age > 5 && dragonInfo.age <= 20) return 'scale-100';
+    if (dragonInfo.age > 20 && dragonInfo.age <= 40) return 'scale-115';
+    return 'scale-125';
   };
+
+  useEffect(() => {
+    if (currentStop === 'DragonLair') {
+      if (!isSuccessful()) {
+        navigate('/game-over');
+        return;
+      }
+      setIsVisible(true);
+      const confettiTimer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 4000);
+      return () => clearTimeout(confettiTimer);
+    }
+  }, [currentStop, navigate]);
 
   const handlePlayAgain = () => {
     resetGame();
-    navigate('/intro');
+    setCurrentStop('');
+    navigate('/dragon-info');
   };
 
+  const handleBackToStart = () => {
+    setCurrentStop('');
+    navigate('/');
+  };
+
+  const toggleTips = () => {
+    setShowTips(!showTips);
+  };
+
+  if (!isVisible) return null;
+
   return (
-    <motion.div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
-      <div className="relative w-full max-w-4xl p-8">
-        <div 
-          className="relative rounded-lg shadow-xl overflow-hidden min-h-[600px]"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className="fixed inset-0 z-[1000] flex items-center justify-center overflow-auto py-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
         >
-          {/* Victory content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-black bg-opacity-40">
-            {showVictoryMessage && (
-              <div className="text-center">
-                <motion.h1 
-                  className="text-4xl font-bold text-yellow-300 mb-6 font-pixel"
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0}
-                >
-                  VICTORY!
-                </motion.h1>
+          <div className="absolute inset-0 bg-black bg-opacity-60" />
 
-                <motion.div
-                  className="text-xl text-white mb-8 font-pixel"
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  custom={1}
-                >
-                  {Object.values(leaks).filter(Boolean).length === 0 ? (
-                    <p className="text-green-300">
-                      Congratulations! You've successfully guided {dragonInfo.name} home without revealing any sensitive information!
-                    </p>
-                  ) : (
-                    <div>
-                      <p className="text-yellow-200 mb-4">
-                        You've reached home, but some information was leaked to the monsters:
-                      </p>
-                      <ul className="list-disc list-inside text-red-300">
-                        {leaks.name && <li>Dragon's Name: {dragonInfo.name}</li>}
-                        {leaks.age && <li>Dragon's Age: {dragonInfo.age}</li>}
-                        {leaks.origin && <li>Dragon's Origin: {dragonInfo.origin}</li>}
-                      </ul>
-                    </div>
-                  )}
-                </motion.div>
-
-                <motion.div
-                  className="relative my-3"
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  custom={2}
-                >
-                  <motion.img
-                    src={getDragonImage()}
-                    alt={`${dragonInfo.color} Dragon`}
-                    className={`${getDragonScale()} max-h-52 drop-shadow-lg`}
-                    animate={{
-                      y: [0, -10, 0],
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  
-                  {/* Glowing effect around dragon */}
+          <AnimatePresence>
+            {showConfetti && (
+              <motion.div
+                className="absolute inset-0 overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+              >
+                {Array.from({ length: 30 }).map((_, i) => (
                   <motion.div
-                    className="absolute inset-0 z-[-1] rounded-full bg-yellow-300 filter blur-xl"
-                    style={{ opacity: 0.3 }}
+                    key={`particle-${i}`}
+                    className="absolute"
+                    style={{
+                      top: `${Math.random() * 100}%`,
+                      left: `${Math.random() * 100}%`,
+                      width: `${10 + Math.random() * 20}px`,
+                      height: `${10 + Math.random() * 20}px`,
+                      backgroundImage: `url(${confettiImage})`,
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      rotate: `${Math.random() * 360}deg`,
+                      opacity: 0.7,
+                    }}
                     animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.3, 0.5, 0.3],
+                      y: [0, -100 - Math.random() * 200],
+                      x: [0, (Math.random() - 0.5) * 100],
+                      rotate: [`${Math.random() * 360}deg`, `${Math.random() * 360 + 180}deg`],
+                      opacity: [0, 0.8, 0],
                     }}
                     transition={{
-                      duration: 3,
+                      duration: 4 + Math.random() * 3,
                       repeat: Infinity,
-                      ease: "easeInOut",
+                      delay: Math.random() * 5,
+                      ease: 'easeOut'
                     }}
                   />
-                </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
+          <motion.div
+            className="relative w-[95%] max-w-[52rem] bg-gray-800 bg-opacity-80 rounded-2xl overflow-y-auto max-h-[95vh]"
+            style={{
+              boxShadow: '0 0 30px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2)',
+              border: '4px solid rgba(255, 215, 0, 0.3)',
+            }}
+          >
+            <div
+              className="absolute inset-0 z-0 opacity-80"
+              style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: '90%',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                filter: 'brightness(1.2)',
+              }}
+            />
+
+            <div className="relative z-10 p-5 flex flex-col items-center text-center w-full">
+              <motion.div
+                className="flex items-center justify-center mb-5"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                custom={0}
+              >
+                <img src={trophyImage} alt="Trophy" className="w-16 h-16 mr-4" />
+                <h2 className="text-3xl font-bold text-yellow-400">
+                  {isSuccessful() ? 'Congratulations!' : 'Game Over!'}
+                </h2>
+              </motion.div>
+
+              <motion.div
+                className="mb-6"
+                variants={itemVariants}
+                custom={1}
+              >
+                <p className="text-gray-300 font-semibold text-lg">
+                  {isSuccessful() ? (
+                    <>
+                      You successfully protected the dragon's information!
+                      {Object.values(leaks).some(Boolean) && (
+                        <span className="block mt-2 text-yellow-400">
+                          However, you did leak: {[
+                            leaks.name && `Dragon's Name (${dragonInfo.name})`,
+                            leaks.age && `Dragon's Age (${dragonInfo.age})`,
+                            leaks.origin && `Dragon's Origin (${dragonInfo.origin})`
+                          ].filter(Boolean).join(', ')}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      The dragon's information was completely leaked!
+                      <span className="block mt-2 text-red-400">
+                        Leaked information: {[
+                          leaks.name && `Dragon's Name (${dragonInfo.name})`,
+                          leaks.age && `Dragon's Age (${dragonInfo.age})`,
+                          leaks.origin && `Dragon's Origin (${dragonInfo.origin})`
+                        ].filter(Boolean).join(', ')}
+                      </span>
+                    </>
+                  )}
+                </p>
+              </motion.div>
+
+              <motion.div
+                className="relative my-3"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                custom={2}
+              >
+                <motion.img
+                  src={getDragonImage()}
+                  alt={`${dragonInfo.color} Dragon`}
+                  className={`${getDragonScale()} max-h-52 drop-shadow-lg`}
+                  animate={{
+                    y: [0, -10, 0],
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                  }}
+                />
+
+                <motion.div
+                  className="absolute inset-0 z-[-1] rounded-full bg-yellow-300 filter blur-xl"
+                  style={{ opacity: 0.3 }}
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                />
+              </motion.div>
+
+              <motion.div
+                className="flex flex-wrap justify-center gap-3 mb-4 z-20"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                custom={3}
+              >
                 <motion.button
-                  className="mt-8 px-8 py-3 bg-yellow-500 text-black rounded-lg font-pixel hover:bg-yellow-400 transition-colors"
-                  onClick={handlePlayAgain}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  custom={3}
+                  className="font-pixel px-5 py-2 text-base relative group cursor-pointer"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={handlePlayAgain}
+                  style={{
+                    background: 'linear-gradient(to bottom, #10B981, #059669)',
+                    borderRadius: '8px',
+                    border: '2px solid #065F46',
+                    boxShadow: '0 3px 0 #065F46, inset 0 1px 0 rgba(255,255,255,0.2)'
+                  }}
                 >
-                  Play Again
+                  <span className="relative z-10 text-white drop-shadow-md">Play Again</span>
                 </motion.button>
-              </div>
+
+                <motion.button
+                  className="font-pixel px-5 py-2 text-base relative group cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleBackToStart}
+                  style={{
+                    background: 'linear-gradient(to bottom, #6B7280, #4B5563)',
+                    borderRadius: '8px',
+                    border: '2px solid #1F2937',
+                    boxShadow: '0 3px 0 #1F2937, inset 0 1px 0 rgba(255,255,255,0.2)'
+                  }}
+                >
+                  <span className="relative z-10 text-white drop-shadow-md">Back to Start</span>
+                </motion.button>
+
+                <motion.button
+                  className="font-pixel px-5 py-2 text-base relative group cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={toggleTips}
+                  style={{
+                    background: 'linear-gradient(to bottom, #8B5CF6, #7C3AED)',
+                    borderRadius: '8px',
+                    border: '2px solid #5B21B6',
+                    boxShadow: '0 3px 0 #5B21B6, inset 0 1px 0 rgba(255,255,255,0.2)'
+                  }}
+                >
+                  <span className="relative z-10 text-white drop-shadow-md">What Did I Learn?</span>
+                </motion.button>
+              </motion.div>
+
+              <motion.div
+                className="bg-gray-900 bg-opacity-80 rounded-xl p-5 mb-3 w-full max-w-[48rem] mx-auto"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                custom={4}
+              >
+                <p className="text-white font-semibold text-lg mb-2">
+                  Your dragon has made it home safely thanks to your choices!
+                </p>
+                <p className="text-gray-200 font-semibold text-base">
+                  You navigated phishing attempts and protected your dragon's personal details.
+                </p>
+              </motion.div>
+
+              <motion.div
+                className="bg-gray-900 bg-opacity-70 rounded-xl p-5 mb-4 w-full max-w-[48rem] mx-auto"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                custom={5}
+              >
+                <p className="text-gray-200 font-semibold text-base mb-3">
+                  One monster was trying to trick you into sharing personal data while pretending to help.
+                  The other monster offered a safer route without asking for private details.
+                </p>
+                <p className="text-gray-200 font-semibold text-base">
+                  This journey teaches a key lesson about phishing:
+                  malicious actors disguise themselves as trustworthy helpers to steal information.
+                </p>
+                <p className="text-yellow-200 font-semibold mt-2 text-base">
+                  If something feels suspicious, pause and verify before you share anything.
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <AnimatePresence>
+            {showTips && (
+              <motion.div
+                className="fixed inset-0 z-[1100] flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-70" onClick={toggleTips} />
+
+                <motion.div
+                  className="relative bg-gray-900 rounded-xl p-8 max-w-[48rem] w-[95%] mx-4"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  style={{
+                    boxShadow: '0 0 30px rgba(139, 92, 246, 0.3)',
+                    border: '2px solid rgba(139, 92, 246, 0.5)',
+                  }}
+                >
+                  <h2 className="font-pixel text-2xl text-purple-400 mb-4 text-center">Online Safety Tips</h2>
+
+                  <ul className="space-y-4">
+                    <li className="text-gray-300">Check for spelling mistakes and odd domains.</li>
+                    <li className="text-gray-300">Be careful with urgency language and pressure tactics.</li>
+                    <li className="text-gray-300">Avoid suspicious links and verify sources first.</li>
+                    <li className="text-gray-300">Never share personal information with strangers online.</li>
+                  </ul>
+
+                  <div className="text-center mt-6">
+                    <motion.button
+                      className="font-pixel px-5 py-2 bg-purple-600 text-white rounded-lg"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={toggleTips}
+                    >
+                      Close Tips
+                    </motion.button>
+                  </div>
+                </motion.div>
+              </motion.div>
             )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
-export default StopScene_DragonLair; 
+export default StopScene_DragonLair;

@@ -23,7 +23,7 @@ const StopScene_SkybridgeArchipelago = () => {
   
   const phishingPrompt = () => {
     const leakedInfo = getPhishingPrompt();
-    return `The wind is strong, but it can carry us over faster. Take this risky passage with me—it's worth it! But before we go, what's the dragon's Age?`;
+    return `${leakedInfo} The wind is strong, but it can carry us over faster. Take this risky passage with me—it's worth it!`;
   };
 
   // Randomize which side shows the phishing prompt
@@ -55,7 +55,8 @@ const StopScene_SkybridgeArchipelago = () => {
           from: 'skybridge-archipelago',
           to: 'stormy-shoals'
         });
-        navigate('/stormy-shoals');
+        setCurrentStop('');
+        // Stay on /map: MapScene runs footprint animation then sets next stop (same as Map 1).
       }, 500);
     } else {
       setSelectedPath('shimmering-shore');
@@ -65,7 +66,8 @@ const StopScene_SkybridgeArchipelago = () => {
           from: 'skybridge-archipelago',
           to: 'shimmering-shore'
         });
-        navigate('/shimmering-shore');
+        setCurrentStop('');
+        // Stay on /map: MapScene runs footprint animation then sets next stop (same as Map 1).
       }, 500);
     }
   };
@@ -96,7 +98,7 @@ const StopScene_SkybridgeArchipelago = () => {
                   {/* Left prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(!promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(!promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
@@ -117,7 +119,7 @@ const StopScene_SkybridgeArchipelago = () => {
                   {/* Right prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 

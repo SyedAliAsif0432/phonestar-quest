@@ -592,6 +592,20 @@ const MapScene: React.FC = () => {
       color: 'rgba(255, 220, 100, 0.8)',
       dotColor: 'rgba(255, 220, 100, 1)',
     },
+
+    // Shimmering Shore → Dragon Lair
+    {
+      id: 'shore-lair',
+      from: 'shimmering-shore',
+      to: 'dragon-lair',
+      points: [
+        { x: 1065, y: 460 },
+        { x: 1150, y: 490 },
+        { x: 1300, y: 515 }
+      ],
+      color: 'rgba(255, 235, 140, 0.8)',
+      dotColor: 'rgba(255, 235, 140, 1)',
+    },
     
     // Whispering Cliffs → Stormy Shoals
     { 

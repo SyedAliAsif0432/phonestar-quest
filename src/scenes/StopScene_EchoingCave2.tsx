@@ -44,7 +44,7 @@ const StopScene_EchoingCave2 = () => {
 
   const handlePromptClick = (isSafe: boolean) => {
     if (!isSafe) {
-      handlePhishingChoice("origin", 'game-over');
+      handlePhishingChoice("origin", 'skybridge-archipelago');
       if (useDragonStore.getState().gameOver) {
         navigate('/game-over');
         return;
@@ -53,7 +53,7 @@ const StopScene_EchoingCave2 = () => {
       setTimeout(() => {
         setFootprintInfo({
           from: 'echoing-cave-2',
-          to: 'game-over'
+          to: 'skybridge-archipelago'
         });
         setCurrentStop('');
       }, 500);
@@ -96,7 +96,7 @@ const StopScene_EchoingCave2 = () => {
                   {/* Left prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(!promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(!promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
@@ -117,7 +117,7 @@ const StopScene_EchoingCave2 = () => {
                   {/* Right prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 

@@ -78,7 +78,7 @@ const StopScene_WhisperingCliffs = () => {
           to: 'stormy-shoals'
         });
         setCurrentStop('');
-        navigate('/stormy-shoals');
+        // Stay on /map: MapScene runs footprint animation then sets next stop (same as Map 1).
       }, 500);
     } else {
       setSelectedPath('ember-isle');
@@ -89,7 +89,7 @@ const StopScene_WhisperingCliffs = () => {
           to: 'ember-isle'
         });
         setCurrentStop('');
-        navigate('/ember-isle');
+        // Stay on /map: MapScene runs footprint animation then sets next stop (same as Map 1).
       }, 500);
     }
   };

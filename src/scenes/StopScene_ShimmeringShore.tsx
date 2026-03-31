@@ -49,7 +49,7 @@ const StopScene_ShimmeringShore = () => {
 
   const handlePromptClick = (isSafe: boolean) => {
     if (!isSafe) {
-      handlePhishingChoice("origin", 'game-over');
+      handlePhishingChoice("origin", 'dragon-lair');
       if (useDragonStore.getState().gameOver) {
         navigate('/game-over');
         return;
@@ -58,10 +58,10 @@ const StopScene_ShimmeringShore = () => {
       setTimeout(() => {
         setFootprintInfo({
           from: 'shimmering-shore',
-          to: 'game-over'
+          to: 'dragon-lair'
         });
         setCurrentStop('');
-        navigate('/game-over');
+        // Keep map flow consistent: only navigate to game over when leak threshold is reached.
       }, 500);
     } else {
       setSelectedPath('dragon-lair');
@@ -117,7 +117,7 @@ const StopScene_ShimmeringShore = () => {
                   {/* Left prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(!promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(!promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
@@ -140,7 +140,7 @@ const StopScene_ShimmeringShore = () => {
                   {/* Right prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 

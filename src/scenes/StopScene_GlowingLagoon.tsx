@@ -52,14 +52,14 @@ const StopScene_GlowingLagoon = () => {
 
   const handlePromptClick = (isSafe: boolean) => {
     if (!isSafe) {
-      handlePhishingChoice("name", 'mystic-falls-2');
+      handlePhishingChoice("name", 'stormy-shoals');
       if (useDragonStore.getState().gameOver) {
         navigate('/game-over');
         return;
       }
       setIsVisible(false);
       setTimeout(() => {
-        setFootprintInfo({ from: 'glowing-lagoon', to: 'mystic-falls-2' });
+        setFootprintInfo({ from: 'glowing-lagoon', to: 'stormy-shoals' });
         setCurrentStop('');
       }, 500);
     } else {

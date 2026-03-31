@@ -95,7 +95,7 @@ const StopScene_MysticFalls2 = () => {
                   {/* Left prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(!promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(!promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
@@ -116,7 +116,7 @@ const StopScene_MysticFalls2 = () => {
                   {/* Right prompt */}
                   <motion.div
                     className="relative cursor-pointer transform hover:scale-105 transition-transform"
-                    onClick={() => handlePromptClick(promptOrder)}
+                    onClick={() => !selectedPath && handlePromptClick(promptOrder)}
                     whileHover={{ scale: 1.05 }}
                   >
                     <div 
